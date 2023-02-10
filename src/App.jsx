@@ -3,13 +3,15 @@ import './App.css';
 
 function App() {
   const [display, setDisplay] = useState('0');
+  const [isResult, setIsResult] = useState(false);
 
   const handleNumber = (event) => {
-  
+
     const number = event.target.textContent;
 
-    if (display === '0') {
+    if (display === '0' || isResult) {
       setDisplay(number);
+      setIsResult(false);
     } else {
       setDisplay(display + number);
     }
@@ -17,27 +19,32 @@ function App() {
 
   const handleClear = () => {
     setDisplay('0');
+    setIsResult(false);
   };
 
   const handleOperators = (event) => {
     const array = display.split(' ');
     const last = array[array.length - 1];
-    console.log(last);
-    if(last === '') {
-      console.log(array);
+    setIsResult(false);
+
+    if (event.target.textContent === '-') {
+      setDisplay(display + ' ' + event.target.textContent);
+    } else if (last === '+' || last === '*' || last === '/' || last === '-') {
       array.pop();
-      array.pop();
-      console.log(array);
-      setDisplay(array.join(' ') + ' ' + event.target.textContent + ' ');
+      while (array[array.length - 1] === '-' || array[array.length - 1] === '+' || array[array.length - 1] === '*' || array[array.length - 1] === '/') {
+        array.pop();
+      }
+      setDisplay(array.join(' ') + ' ' + event.target.textContent);
     } else {
-      setDisplay(display + ' ' + event.target.textContent + ' ');
+      setDisplay(display + ' ' + event.target.textContent);
     }
-    
+
   };
 
   const handleEquals = () => {
-      let result = eval(display);
-      setDisplay(result);
+    let result = eval(display);
+    setDisplay(`${result}`);
+    setIsResult(true);
   };
 
   const handleDecimal = () => {
